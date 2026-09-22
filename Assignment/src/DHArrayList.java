@@ -1,4 +1,4 @@
-public class DHArrayList<E> implements BareBonesArrayList
+public class DHArrayList<E> implements BareBonesArrayList<E>
 {
     //Data
     private int size; //How many elements are there
@@ -48,7 +48,7 @@ public class DHArrayList<E> implements BareBonesArrayList
     {
         //Double the size of the array
         this.capacity *=2;
-        E[] temp = new Object[this.capacity]; // New array with double capacity
+        E[] temp = (E[]) new Object[this.capacity]; // New array with double capacity
         //copy over elements
         for (int i = 0 ; i < myArray.length; i++)
         {
@@ -61,42 +61,119 @@ public class DHArrayList<E> implements BareBonesArrayList
     @Override
     public void add(E a, int index)
     {
-        //TODO Auto-generated method stub
-
+        // This methods adds at a given index
+        // First thing we need to do is check the validity of index
+        if(index < 0 || index > size)
+        {
+            System.out.println("Invalid index!");
+            return;
+        }
+        else if (index == size)
+        {
+            // We are trying to add at end of the AL
+            this.add(a); // we already have this methhod
+        }
+        else
+        {
+            //We have a valid index, and need shifting index
+            // Check if there is space to shift, if not reallocate
+            if(this.size == this.capacity)
+            {
+                // the AL is full
+                this.reallocate();
+            }
+            //Once reallocate is done, we have space to shift the elements
+            // we need to shift all elements from index to end one position to the right
+            // Copy over the elements from the last one of the index
+            for (int i = size; i > index; i--)
+            {
+                this.myArray[i] = this.myArray[i-1];
+            }
+            // once the elements are shifted, insert the data
+            this.myArray[index] = a;
+            this.size++; //update how many elements in the array
+        }
     }
 
     @Override
     public E remove(int index)
     {
-        //TODO Auto-generated method stub
-        return null;
+        //this will delete the element at index
+        //first check the validity of the index
+        if (index < 0  || index >= size)
+        {
+            System.out.println("Invalid index!");
+            return null;
+        }
+        // now shifting might be required
+        // save the element to be deleted so that it can be return
+        E temp = myArray[index];
+        //shifting left
+        for (int i = index; i < size -1; i++)
+        {
+            this.myArray[i] = this.myArray[i+1];
+        }
+        this.size--; // Decrease the number of elements in the array
+        return temp; // return the deleted element
     }
 
     @Override
     public E get(int index)
     {
-        //TODO Auto-generated method stub
-        return null;
+        //this returns the element at index but no delete
+        //first check the validity of the index
+        if (index < 0  || index >= size)
+        {
+            System.out.println("Invalid index!");
+            return null;
+        }
+        return myArray[index]; //if index is valid return the element at index
     }
 
     @Override
     public void set (E a, int index)
     {
-        //TODO Auto-generated method stub
+        //update the element at the index
+        //first check the validity of the index
+        if (index < 0  || index >= size)
+        {
+            System.out.println("Invalid index!");
+            return;
+        }
+        myArray[index] = a; //if the index is valid, update the index
+        return;
     }
 
     @Override
     public int getSize()
     {
-        //TODO Auto-generated method stub
-        return 0;
+        //returns how many elements are in the AL
+        return this.size;
     }
 
     @Override
     public int indexOf(E a)
     {
-        //TODO Auto-generated method stub
-        return 0;
+        //find the first location of an element that we are searching in the AL
+        //first check the validity of the index
+        if (size == 0)
+        {
+            System.out.println("Invalid index! Size or Capacity has to be greater than 0");
+            return -1 ;
+        }
+        for (int i = 0; i < size; i++)
+        {
+            if (myArray[i] == a)//(myArray[i].equals(a)) did not define equals function yet
+            {
+                //System.out.println("was found at " + i);
+                return i;
+            }
+            /*else if (i == size - 1 && myArray[i] != a)
+            {
+                return -1;
+            }*/
+        }
+        return -1;
     }
 
     //We are going to implement to string method
